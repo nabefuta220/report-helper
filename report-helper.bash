@@ -31,24 +31,40 @@ for KIND in $KINDS;do
 
 done
 }
-
+## 追加の引数を受け取る、引数はoutputに入る
+get_addional_argument(){
+     if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]] ; then
+        echo "$1 requires an argument." 1>&2
+        exit 1
+    else
+        output="$2"
+    fi
+}
 ## main
     echo "test"
+    input="$1"
+    shift
     while (( $# > 0 )) 
 do
     case $1 in
     
     -r | --replace )
-    echo "replace"
+    echo "replace at:$2"
+    get_addional_argument $1 $2
+    shift
     ;;
     -l | --link )
     echo "replace link"
+    get_addional_argument $1 $2
+    shift
     ;;
     -c | --check)
     echo "check label"
     ;;
     -n | --next)
     echo "find next"
+    get_addional_argument $1 $2
+    shift
     ;;
     -h | --help)
     echo "help"
@@ -63,3 +79,5 @@ do
     esac
     shift
     done
+    echo "input file :$input"
+    echo "output file : $output"
