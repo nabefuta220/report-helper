@@ -1,8 +1,8 @@
 #!/bin/bash
 
 KINDS="図 表 リスト"
-INPUT="report_test.md"
-OUTPUT="report_base.md"
+#INPUT="report_test.md"
+#OUTPUT="report_base.md"
 
 # more report1.md | grep "[図表][0-9]+(-[0-9]+)+" -E -o | sort | uniq -c | awk  '$1==1 {print $2 }' # missing cheaker
 
@@ -13,16 +13,73 @@ OUTPUT="report_base.md"
 
 # graphe num : more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | uniq
 
-cp $INPUT $OUTPUT 
-for KIND in $KINDS;do
-    TAREGTS=`more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |sort|uniq` # filter
 
+
+replace_label(){
+
+cp $1 $2 
+for KIND in $KINDS;do
+    TAREGTS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |sort|uniq` # filter
     COUNT=1;
     for TARGET in $TAREGTS
     do
         echo "$TARGET $COUNT"
-        sed "s/$TARGET/$KIND$COUNT/g" $OUTPUT -i
+        sed "s/$TARGET/$KIND$COUNT/g" $2 -i
         COUNT=`expr $COUNT + 1`
     done
 
 done
+echo "replaced!"
+exit 0
+}
+## 追加の引数を受け取る、引数はoutputに入る
+get_addional_argument(){
+     if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]] ; then
+        echo "$1 requires an argument." 1>&2
+        exit 1
+    else
+        output="$2"
+    fi
+}
+## main
+    echo "test"
+    input="$1"
+    shift
+    while (( $# > 0 )) 
+do
+    case $1 in
+    
+    -r | --replace )
+    echo "replace at:$2"
+    get_addional_argument $1 $2
+    shift
+    replace_label $input $output
+    ;;
+    -l | --link )
+    echo "replace link"
+    get_addional_argument $1 $2
+    shift
+    ;;
+    -c | --check)
+    echo "check label"
+    ;;
+    -n | --next)
+    echo "find next"
+    get_addional_argument $1 $2
+    shift
+    ;;
+    -h | --help)
+    echo "help"
+    ;;
+
+    -* | --*)
+        echo "invalid option."
+        echo "at: $1"
+        exit 1
+    
+    
+    esac
+    shift
+    done
+    echo "input file :$input"
+    echo "output file : $output"
