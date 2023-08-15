@@ -32,8 +32,34 @@ for KIND in $KINDS;do
 done
 }
 
-main(){
+## main
     echo "test"
-}
+    while (( $# > 0 )) 
+do
+    case $1 in
+    
+    -r | --replace )
+    echo "replace"
+    ;;
+    -l | --link )
+    echo "replace link"
+    ;;
+    -c | --check)
+    echo "check label"
+    ;;
+    -n | --next)
+    echo "find next"
+    ;;
+    -h | --help)
+    echo "help"
+    ;;
 
-main
+    -* | --*)
+        echo "invalid option."
+        echo "at: $1"
+        exit 1
+    
+    
+    esac
+    shift
+    done
