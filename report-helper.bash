@@ -13,8 +13,7 @@ KINDS="図 表 リスト"
 
 # graphe num : more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | uniq
 
-
-
+#ラベルを張り替える
 replace_label(){
 
 cp $1 $2 
@@ -41,10 +40,18 @@ get_addional_argument(){
         output="$2"
     fi
 }
+##helpを表示
+usage(){
+    cat usage.txt
+    exit 0
+}
 ## main
     echo "test"
     input="$1"
     shift
+    if [[ $input = '-h' ]] ; then
+    usage
+    fi
     while (( $# > 0 )) 
 do
     case $1 in
@@ -70,6 +77,7 @@ do
     ;;
     -h | --help)
     echo "help"
+    usage
     ;;
 
     -* | --*)
