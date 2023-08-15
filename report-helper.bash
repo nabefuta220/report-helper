@@ -1,8 +1,8 @@
 #!/bin/bash
 
 KINDS="図 表 リスト"
-INPUT="report_test.md"
-OUTPUT="report_base.md"
+#INPUT="report_test.md"
+#OUTPUT="report_base.md"
 
 # more report1.md | grep "[図表][0-9]+(-[0-9]+)+" -E -o | sort | uniq -c | awk  '$1==1 {print $2 }' # missing cheaker
 
@@ -17,19 +17,20 @@ OUTPUT="report_base.md"
 
 replace_label(){
 
-cp $INPUT $OUTPUT 
+cp $1 $2 
 for KIND in $KINDS;do
-    TAREGTS=`more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |sort|uniq` # filter
-
+    TAREGTS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |sort|uniq` # filter
     COUNT=1;
     for TARGET in $TAREGTS
     do
         echo "$TARGET $COUNT"
-        sed "s/$TARGET/$KIND$COUNT/g" $OUTPUT -i
+        sed "s/$TARGET/$KIND$COUNT/g" $2 -i
         COUNT=`expr $COUNT + 1`
     done
 
 done
+echo "replaced!"
+exit 0
 }
 ## 追加の引数を受け取る、引数はoutputに入る
 get_addional_argument(){
@@ -52,6 +53,7 @@ do
     echo "replace at:$2"
     get_addional_argument $1 $2
     shift
+    replace_label $input $output
     ;;
     -l | --link )
     echo "replace link"

@@ -15,8 +15,8 @@ OUTPUT="report_base.md"
 
 cp $INPUT $OUTPUT 
 for KIND in $KINDS;do
-    TAREGTS=`more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |sort|uniq` # filter
-
+    #TAREGTS=`more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |sort|uniq` # filter
+    TAREGTS=`more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |uniq` # filter
     COUNT=1;
     for TARGET in $TAREGTS
     do
