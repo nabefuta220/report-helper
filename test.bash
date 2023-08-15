@@ -13,10 +13,6 @@ OUTPUT="report_base.md"
 
 # graphe num : more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | uniq
 
-
-
-replace_label(){
-
 cp $INPUT $OUTPUT 
 for KIND in $KINDS;do
     TAREGTS=`more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  |sort|uniq` # filter
@@ -30,10 +26,3 @@ for KIND in $KINDS;do
     done
 
 done
-}
-
-main(){
-    echo "test"
-}
-
-main
