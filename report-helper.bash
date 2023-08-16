@@ -15,10 +15,26 @@ KINDS="図 表 リスト"
 #ラベルの整合性をチェックする
 check_label(){
     for KIND in $KINDS;do
-    CHAPTURE_LAEBEL=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk 'a[$0]++{print}'`
-    echo $CHAPTURE_LAEBEL
-    TAREGTS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+" -E -o `
-    echo $TAREGTS
+    ##重複したラベルがあるか調べる
+        DUPLICATED_LAEBELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk 'a[$0]++{print}'`
+        if [[ ! -z $DUPLICATED_LAEBELS  ]] ; then
+            for  DUPLICATED_LAEBEL in $DUPLICATED_LAEBELS ; do
+                LINES=`sed -n "/$DUPLICATED_LAEBEL /=" $1`
+                echo -e "error: chapture of $DUPLICATED_LAEBEL appers multiple place line: \n${LINES}" 1>&2
+                exit 1
+            done
+        else
+            UNIQUE_LABELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk '!a[$0]++{print}'`
+            for UNIQUE_LABEL in $UNIQUE_LABELS; do
+                echo $UNIQUE_LABEL
+                LINES=`sed -n "/$UNIQUE_LABEL /=" $1`
+                echo "chapture :$LINES"
+                grep $UNIQUE_LABEL -o -n $1
+            
+            done
+        fi
+
+        
     done
     exit 0
 }
