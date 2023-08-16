@@ -19,20 +19,32 @@ check_label(){
         DUPLICATED_LAEBELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk 'a[$0]++{print}'`
         if [[ ! -z $DUPLICATED_LAEBELS  ]] ; then
             for  DUPLICATED_LAEBEL in $DUPLICATED_LAEBELS ; do
-                LINES=`sed -n "/$DUPLICATED_LAEBEL /=" $1`
-                echo -e "error: chapture of $DUPLICATED_LAEBEL appers multiple place line: \n${LINES}" 1>&2
+                LINES=`sed -n "/$DUPLICATED_LAEBEL /=" $1| tr '\n' ','`
+                LINES=${LINES/%?/}
+                echo -e "error: chapture of $DUPLICATED_LAEBEL appers multiple place (line: ${LINES})" 1>&2
                 exit 1
             done
         else
         ##参照しているところが1つ以上あるか調べる
             UNIQUE_LABELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk '!a[$0]++{print}'`
+            REFERED_LABELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | awk '!a[$0]++{print}'`
+            
             for UNIQUE_LABEL in $UNIQUE_LABELS; do
                 CHAPTURE_LINE=`sed -n "/$UNIQUE_LABEL /=" $1`
                 LINES=`sed -n -e "/$UNIQUE_LABEL[^ ]/=" $1`
+                REFERED_LABELS=${REFERED_LABELS/$UNIQUE_LABEL/''}
                 if [[ -z $LINES ]] ;then 
-                    echo -e "warning : label $UNIQUE_LABEL is not appeare (first chapture : line $CHAPTURE_LINE)" 1>&2
+                    echo -e "warning : label $UNIQUE_LABEL dosen't appeare (first chapture : line $CHAPTURE_LINE)" 1>&2
                 fi
             done
+            REFERED_LABELS=`echo $REFERED_LABELS | grep "$KIND[0-9]+(-[0-9]+)+" -E -o`
+            if [[ ! -z $REFERED_LABELS ]] ;then 
+                for REFERED_LABEL in $REFERED_LABELS ; do
+                    LINES=`sed -n "/$REFERED_LABEL/=" $1 | tr '\n' ','`
+                    LINES=${LINES/%?/}
+                    echo -e "warning: label $REFERED_LABEL dosen't have chapture (first appered : line $LINES)" 1>&2
+                done;
+            fi
         fi
 
         
