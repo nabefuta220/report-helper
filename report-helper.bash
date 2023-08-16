@@ -68,6 +68,10 @@ replace_label(){
     echo "replaced!"
     exit 0
 }
+## 次に張るべきラベルを表示する
+next_should(){
+
+}
 ## 追加の引数を受け取る、引数はoutputに入る
 get_addional_argument(){
     if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]] ; then
@@ -115,7 +119,6 @@ usage(){
     fi
     while (( $# > 0 )) ; do
         case $1 in
-        
             -r | --replace )
                 echo "replace at:$2"
                 get_addional_argument $1 $2
@@ -136,6 +139,7 @@ usage(){
                 echo "find next"
                 get_addional_argument $1 $2
                 shift
+                next_should $input $output
             ;;
             -h | --help)
                 echo "help"
