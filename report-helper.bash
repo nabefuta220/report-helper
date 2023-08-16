@@ -50,8 +50,14 @@ do
     TARGET=${TARGET#[[};
     TARGET=${TARGET%]]};
     echo "$TARGET $COUNT"
+    ##末尾に追加する
+    if [[ $TARGET =~ https? ]] ; then
     echo "[[$TARGET]] : <$TARGET>" >> $2 
+    else
+    echo "[[$TARGET]] : $TARGET" >> $2 
+    fi
     echo "" >> $2
+    ##置換する
     sed "s#\[\[$TARGET\]\]#\[$COUNT\]#g" $2 -i
     COUNT=`expr $COUNT + 1`
 done
