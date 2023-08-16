@@ -12,7 +12,10 @@ KINDS="図 表 リスト"
 #replaceer : 
 
 # graphe num : more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | uniq
-
+#ラベルの整合性をチェックする
+check_label(){
+    
+}
 #ラベルを張り替える
 replace_label(){
 
