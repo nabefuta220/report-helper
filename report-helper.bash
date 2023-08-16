@@ -14,7 +14,13 @@ KINDS="図 表 リスト"
 # graphe num : more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | uniq
 #ラベルの整合性をチェックする
 check_label(){
-    
+    for KIND in $KINDS;do
+    CHAPTURE_LAEBEL=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk 'a[$0]++{print}'`
+    echo $CHAPTURE_LAEBEL
+    TAREGTS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+" -E -o `
+    echo $TAREGTS
+    done
+    exit 0
 }
 #ラベルを張り替える
 replace_label(){
@@ -72,6 +78,7 @@ do
     ;;
     -c | --check)
     echo "check label"
+    check_label $input $output
     ;;
     -n | --next)
     echo "find next"
