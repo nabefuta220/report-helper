@@ -40,6 +40,24 @@ get_addional_argument(){
         output="$2"
     fi
 }
+## URLリンクを張り替える
+replace_url(){
+    cp $1 $2 
+    TAREGTS=`more $1 | grep "\[\[[^][]+\]\]" -E -o  | uniq` # filter
+    for TARGET in $TAREGTS
+do
+    TARGET=${TARGET#[[};
+    TARGET=${TARGET%]]};
+    echo "$TARGET $COUNT"
+    echo "[[$TARGET]] : <$TARGET>" >> $2 
+    echo "" >> $2
+    sed "s#\[\[$TARGET\]\]#\[$COUNT\]#g" $2 -i
+    COUNT=`expr $COUNT + 1`
+done
+echo "replaced!"
+exit 0
+}
+
 ##helpを表示
 usage(){
     cat usage.txt
@@ -66,6 +84,7 @@ do
     echo "replace link"
     get_addional_argument $1 $2
     shift
+    replace_url $input $output
     ;;
     -c | --check)
     echo "check label"
