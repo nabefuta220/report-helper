@@ -12,7 +12,46 @@ KINDS="図 表 リスト"
 #replaceer : 
 
 # graphe num : more $INPUT | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | uniq
+#ラベルの整合性をチェックする
+check_label(){
+    for KIND in $KINDS;do
+    ##重複したラベルがあるか調べる
+        DUPLICATED_LAEBELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk 'a[$0]++{print}'`
+        if [[ ! -z $DUPLICATED_LAEBELS  ]] ; then
+            for  DUPLICATED_LAEBEL in $DUPLICATED_LAEBELS ; do
+                LINES=`sed -n "/$DUPLICATED_LAEBEL /=" $1| tr '\n' ','`
+                LINES=${LINES/%?/}
+                echo -e "error: chapture of $DUPLICATED_LAEBEL appers multiple place (line: ${LINES})" 1>&2
+                exit 1
+            done
+        else
+        ##参照しているところが1つ以上あるか調べる
+            UNIQUE_LABELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk '!a[$0]++{print}'`
+            REFERED_LABELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+" -E -o  | awk '!a[$0]++{print}'`
+            
+            for UNIQUE_LABEL in $UNIQUE_LABELS; do
+                CHAPTURE_LINE=`sed -n "/$UNIQUE_LABEL /=" $1`
+                LINES=`sed -n -e "/$UNIQUE_LABEL[^ ]/=" $1`
+                REFERED_LABELS=${REFERED_LABELS/$UNIQUE_LABEL/''}
+                if [[ -z $LINES ]] ;then 
+                    echo -e "warning : label $UNIQUE_LABEL dosen't appeare (first chapture : line $CHAPTURE_LINE)" 1>&2
+                fi
+            done
+            REFERED_LABELS=`echo $REFERED_LABELS | grep "$KIND[0-9]+(-[0-9]+)+" -E -o`
+            if [[ ! -z $REFERED_LABELS ]] ;then 
+                for REFERED_LABEL in $REFERED_LABELS ; do
+                    LINES=`sed -n "/$REFERED_LABEL/=" $1 | tr '\n' ','`
+                    LINES=${LINES/%?/}
+                    echo -e "warning: label $REFERED_LABEL dosen't have chapture (first appered : line $LINES)" 1>&2
+                done;
+            fi
+        fi
 
+        
+    done
+    echo "check passed!"
+    exit 0
+}
 #ラベルを張り替える
 replace_label(){
     cp $1 $2 
@@ -74,7 +113,7 @@ usage(){
     if [[ $input = '-h' ]] ; then
         usage
     fi
-    while (( $# > 0 )) ;do
+    while (( $# > 0 )) ; do
         case $1 in
         
             -r | --replace )
@@ -91,6 +130,7 @@ usage(){
             ;;
             -c | --check)
                 echo "check label"
+                check_label $input $output
             ;;
             -n | --next)
                 echo "find next"
