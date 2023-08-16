@@ -44,6 +44,7 @@ get_addional_argument(){
 replace_url(){
     cp $1 $2 
     TAREGTS=`more $1 | grep "\[\[[^][]+\]\]" -E -o  | uniq` # filter
+    COUNT=1
     for TARGET in $TAREGTS
 do
     TARGET=${TARGET#[[};
