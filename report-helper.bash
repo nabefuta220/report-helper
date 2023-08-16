@@ -68,6 +68,40 @@ replace_label(){
     echo "replaced!"
     exit 0
 }
+## 次に張るべきラベルを表示する
+next_should(){
+    #マッチ箇所を縮めて見つかるかを確認する
+    KIND=`echo $2 | grep ^[^0-9]* -P -o`
+    COUNT=1
+    while [[ $2 =~ $KIND[0-9]+(-[0-9]+){$COUNT} ]]; do
+        TARGET=${BASH_REMATCH[0]}
+        APPERED=`grep "$TARGET(?!-[0-9]+)+" $1 -P  -o | sort |uniq`
+
+        if [[ -n ${APPERED} ]] ; then
+            APPERED_LINES=`sed -n "/$APPERED/=" $1 | tr '\n' ','`
+            APPERED_LINES=${APPERED_LINES/%?/}
+            if [[ ! $2 == $TARGET ]] ;then
+                echo "$TARGET appered in : line ${APPERED_LINES}"
+                exit 1
+            else
+                echo "$TARGET appered in : line ${APPERED_LINES}"
+                exit 0
+            fi
+        fi
+        COUNT=`expr $COUNT + 1`
+    done
+    ## 候補の確認
+    CANDINATE=`grep "$2(-[0-9]+)*" $1 -E -o | sort | uniq`
+    COUNT=1
+    #次に張るべきラベルを調べる
+    while [[ $CANDINATE =~ $2-$COUNT ]] ; do
+        COUNT=`expr $COUNT + 1`
+    done
+    echo "next : $2-$COUNT"
+    exit 0
+}
+
+
 ## 追加の引数を受け取る、引数はoutputに入る
 get_addional_argument(){
     if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]] ; then
@@ -107,7 +141,6 @@ usage(){
     exit 0
 }
 ## main
-    echo "test"
     input="$1"
     shift
     if [[ $input = '-h' ]] ; then
@@ -115,30 +148,25 @@ usage(){
     fi
     while (( $# > 0 )) ; do
         case $1 in
-        
             -r | --replace )
-                echo "replace at:$2"
                 get_addional_argument $1 $2
                 shift
                 replace_label $input $output
             ;;
             -l | --link )
-                echo "replace link"
                 get_addional_argument $1 $2
                 shift
                 replace_url $input $output
             ;;
             -c | --check)
-                echo "check label"
                 check_label $input $output
             ;;
             -n | --next)
-                echo "find next"
                 get_addional_argument $1 $2
                 shift
+                next_should $input $output
             ;;
             -h | --help)
-                echo "help"
                 usage
             ;;
 
@@ -149,5 +177,3 @@ usage(){
             esac
         shift
     done
-    echo "input file :$input"
-    echo "output file : $output"
