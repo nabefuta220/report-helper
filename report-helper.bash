@@ -49,6 +49,7 @@ check_label(){
 
         
     done
+    echo "check passed!"
     exit 0
 }
 #ラベルを張り替える
