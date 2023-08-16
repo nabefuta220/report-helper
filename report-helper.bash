@@ -26,11 +26,11 @@ check_label(){
         else
             UNIQUE_LABELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk '!a[$0]++{print}'`
             for UNIQUE_LABEL in $UNIQUE_LABELS; do
-                echo $UNIQUE_LABEL
-                LINES=`sed -n "/$UNIQUE_LABEL /=" $1`
-                echo "chapture :$LINES"
-                grep $UNIQUE_LABEL -o -n $1
-            
+                CHAPTURE_LINE=`sed -n "/$UNIQUE_LABEL /=" $1`
+                LINES=`sed -n -e "/$UNIQUE_LABEL[^ ]/=" $1`
+                if [[ -z $LINES ]] ;then 
+                    echo -e "warning : label $UNIQUE_LABEL is not appeare (first chapture : line $CHAPTURE_LINE)" 1>&2
+                fi
             done
         fi
 
