@@ -24,6 +24,7 @@ check_label(){
                 exit 1
             done
         else
+        ##参照しているところが1つ以上あるか調べる
             UNIQUE_LABELS=`more $1 | grep "$KIND[0-9]+(-[0-9]+)+ " -E -o  | awk '!a[$0]++{print}'`
             for UNIQUE_LABEL in $UNIQUE_LABELS; do
                 CHAPTURE_LINE=`sed -n "/$UNIQUE_LABEL /=" $1`
