@@ -15,9 +15,33 @@ markdownでの図・表のラベル付けや参考文献の貼り替えを支援
     git clone https://github.com/nabefuta220/report-helper
     ```
 
-2. パスを通す
+2. 権限を与える
 
-3. 権限を与える
+    以下のコマンドでできます。
+
+    ```bash
+    chmod u+x report-helper.bash
+    ```
+
+
+3. パスを通す
+
+
+    ~/.bash_profileに移動して、PATHにこのレポジトリをインストールしたパスを追加します
+
+    例えば、`/home/hoge/fuga`にこのレポジトリを追加した場合、次のコマンドでできます。
+
+    ```bash
+    echo 'export PATH=/home/hoge/fuga/report-helper:$PATH' >> ~/.bash_profile
+    ```
+
+    また、次のコマンドで追加をすぐに反映することができます(もしくは再起動をしても構いません)
+
+    ```bash
+    source ~/.bash_profile
+    ```
+
+    
 
 
 
