@@ -20,7 +20,7 @@ markdownでの図・表のラベル付けや参考文献の貼り替えを支援
     以下のコマンドでできます。
 
     ```bash
-    chmod u+x report-helper.bash
+    chmod u+x report-helper/report-helper
     ```
 
 
