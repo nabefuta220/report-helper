@@ -41,7 +41,23 @@ markdownでの図・表のラベル付けや参考文献の貼り替えを支援
     source ~/.bash_profile
     ```
 
-    
+    最後に次のコマンドを打ち、次のようなコマンドがでればOKです。
+
+    ```bash
+    report-helper
+
+    assist tool for report
+
+    Usage : 
+
+        report-helper [INPUT] [OPTIOINS] 
+
+    OPTIOINS :
+        -r , --replace  replace label
+        -l , --link     replace link
+        -c , --check    check label
+        -n , --next     find next label
+    ```
 
 
 
