@@ -126,7 +126,20 @@ replace_url(){
 
 ##helpを表示
 usage(){
-    cat usage.txt
+      cat <<EOM
+assist tool for report
+
+Usage : 
+
+    report-helper [INPUT] [OPTIOINS] 
+
+OPTIOINS :
+    -r , --replace  replace label
+    -l , --link     replace link
+    -c , --check    check label
+    -n , --next     find next label
+
+EOM
 }
 ## main
 
